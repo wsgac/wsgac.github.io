@@ -6,15 +6,15 @@
 #+AUTHOR: Wojciech S. Gac
 # #+EMAIL: wojciech.s.gac@gmail.com
 #+LANGUAGE: en
-#+INFOJS_OPT: path:https://thomasf.github.io/solarized-css/org-info.min.js
-# #+INFOJS_OPT: path:js/org-info.js
+# #+INFOJS_OPT: path:https://thomasf.github.io/solarized-css/org-info.min.js
+#+INFOJS_OPT: path:js/org-info.js
 #+INFOJS_OPT: toc:nil ltoc:t view:info mouse:underline buttons:nil
 #+INFOJS_OPT: up:index.html
 #+INFOJS_OPT: home:index.html
 #+LINK_UP: index.html
 #+LINK_HOME: index.html
-# #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://thomasf.github.io/solarized-css/solarized-dark.min.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/solarized-dark.min.css" />
+# #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://thomasf.github.io/solarized-css/solarized-dark.min.css" />
 #+LATEX_HEADER:
 
 #+EXPORT_SELECT_TAGS: export
