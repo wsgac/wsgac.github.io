@@ -1,0 +1,143 @@
+#+startup: align fold nodlcheck oddeven lognotestate
+# #+setupfile: theme-readtheorg.setup
+#+OPTIONS: d:nil
+#+OPTIONS: html-postamble:auto html-preamble:t tex:t
+#+TITLE: wsg - non-random wandering
+#+AUTHOR: Wojciech S. Gac
+# #+EMAIL: wojciech.s.gac@gmail.com
+#+LANGUAGE: en
+#+INFOJS_OPT: path:http://thomasf.github.io/solarized-css/org-info.min.js
+# #+INFOJS_OPT: path:js/org-info.js
+#+INFOJS_OPT: toc:nil ltoc:t view:info mouse:underline buttons:nil
+#+INFOJS_OPT: up:index.html
+#+INFOJS_OPT: home:index.html
+#+LINK_UP: index.html
+#+LINK_HOME: index.html
+# #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" />
+#+LATEX_HEADER:
+
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+HTML_CONTAINER: div
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_HEAD_EXTRA:
+#+HTML_HTML5_FANCY:
+#+HTML_INCLUDE_SCRIPTS:
+#+HTML_INCLUDE_STYLE:
+#+HTML_LINK_HOME:
+#+HTML_LINK_UP:
+#+HTML_MATHJAX:
+#+HTML_VALIDATION_LINK: nil
+
+* Emacs hacking
+  :PROPERTIES:
+  :CUSTOM_ID: emacs-hacking
+  :END:
+  
+** Org-mode file bundled with executable synchronization code
+   :PROPERTIES:
+   :CUSTOM_ID: org-mode-bundled-sync
+   :END:
+   I've been experimenting for a while with ways to get some kind of
+   file synchronization mechanism for my Org-mode files, without
+   having to resort to Dropbox, Google Drive or the likes. I started
+   out by writing some Elisp code to handle the sync process for me,
+   but than tried an alternative approach. I figured, since Org-mode
+   allows me to have executable source code blocks, I could use that -
+   combined with a certain degree of introspection on the Org file's
+   part - to =bundle= synchronization functionality with the file
+   itself.
+
+   For starters, I wanted to store the path to the remote file[fn:ssh]
+   (to which I'll be synchronizing) as a named field. This can be done
+   e.g. using =#+BEGIN_EXAMPLE=:
+   #+BEGIN_SRC org
+     ,#+name: remote-path
+     ,#+BEGIN_EXAMPLE
+       /scp:<my-remote-hostname>:/path/to/my/remote/file.org
+     ,#+END_EXAMPLE
+   #+END_SRC
+   Having such a snippet in my file will allow me to refer to its
+   content using the identifier =remote-path=.
+
+   Next, I added an Elisp snippet that syncs the file out to the
+   remote location:
+   #+BEGIN_SRC org
+     ,#+name: push
+     ,#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent
+       (save-buffer (current-buffer))
+       (make-directory (file-name-directory remote) t)
+       (copy-file buffer-file-name
+                  remote 1)
+       (message "Synced file to %s" remote)
+     ,#+END_SRC
+   #+END_SRC
+   Let's have a quick rundown of the snippet. First of all, I've
+   called it =push= for easy reference (to be used later). I used the
+   =:var= keyword to define a block-local binding available for use
+   in the code (in my case a variable =remote= bound to the value of
+   =remote-path= - my =#+BEGIN_EXAMPLE= block above). The =:results
+   output silent= bit avoids inserting the results of code execution
+   into the file. What the actual code does is:
+   - ensure the buffer is saved
+   - ensure the remote directory exists
+   - do the actual copy
+   - generate a message to the user
+   
+   I also added a mirror image of the above snippet - in charge of
+   copying changes /from/ the remote server:
+   #+BEGIN_SRC org
+     ,#+name: pull
+     ,#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent
+       (save-buffer (current-buffer))
+       (copy-file remote buffer-file-name 1)
+       (revert-buffer t t)
+       (message "Synced %s to file" remote)
+     ,#+END_SRC
+   #+END_SRC
+   Again, a rundown:
+   - save current buffer
+   - copy the remote file to local file system
+   - revert contents of the current buffer
+   - generate a message to the user
+
+   Now, this in itself already does the trick, but it requires you to
+   navigate to the appropriate code block, depending on which action
+   you want. What seemed to me the natural next step was to have some
+   code in my =.emacs= file that would make it easier by automatically
+   finding the right code block and executing it. This turned out to
+   be relatively simple. I came up with the following Elisp function:
+   #+BEGIN_SRC emacs-lisp
+     (defun org-sync-current-file (prefix)
+       (interactive "P")
+       (let ((action
+        (cl-case prefix
+          ((nil) "push")
+          (t "pull"))))
+         (save-excursion
+   	   (org-babel-goto-named-src-block action)
+     	   (org-ctrl-c-ctrl-c))))
+   #+END_SRC
+   I decided to for the function to dispatch based on the prefix
+   argument: no prefix means =push=, prefix means =pull=. The function
+   retrieves the appropriate code block - either =push= or =pull= -
+   and executes it. Depending on your Org-mode settings, Emacs might
+   at this point ask you for confirmation before actually executing
+   the code. One final touch to make this more usable is to pick some
+   reasonable key binding. In my case =F12= seemed a decent choice:
+   #+BEGIN_SRC emacs-lisp
+     (define-key global-map (kbd "<f12>") 'org-sync-current-file)
+   #+END_SRC
+
+   The above solution might not be what you'd consider a reliable
+   synchronization system. Rather, it should be regarded as an
+   interesting - if somewhat contrived - exercise in blurring the
+   lines between data and behavior. 
+
+[fn:ssh] It helps to have a permanent entry for your remote server in
+your =~/.ssh/config= file and SSH key-based authentication
+enabled. Otherwise, you're going to have to use entries of the form
+=user@host#port= and/or have to type your password each time you do
+the sync.
