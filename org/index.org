@@ -120,7 +120,7 @@
    	   (org-babel-goto-named-src-block action)
      	   (org-ctrl-c-ctrl-c))))
    #+END_SRC
-   I decided to for the function to dispatch based on the prefix
+   I decided for the function to dispatch based on the prefix
    argument: no prefix means =push=, prefix means =pull=. The function
    retrieves the appropriate code block - either =push= or =pull= -
    and executes it. Depending on your Org-mode settings, Emacs might
