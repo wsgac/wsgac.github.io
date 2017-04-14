@@ -1,6 +1,6 @@
 #+startup: align fold nodlcheck oddeven lognotestate
 # #+setupfile: theme-readtheorg.setup
-#+OPTIONS: d:nil
+#+OPTIONS: d:nil H:2 f:t
 #+OPTIONS: html-postamble:auto html-preamble:t tex:t
 #+TITLE: wsg - non-random wandering
 #+AUTHOR: Wojciech S. Gac
@@ -141,3 +141,129 @@ your =~/.ssh/config= file and SSH key-based authentication
 enabled. Otherwise, you're going to have to use entries of the form
 =user@host#port= and/or have to type your password each time you do
 the sync.
+
+* Hardware Configuration
+  :PROPERTIES:
+  :CUSTOM_ID: hardware-configuration
+  :END:
+
+** The Zen of trackball configuration
+   :PROPERTIES:
+   :CUSTOM_ID: the-zen-of-trackball-configuration
+   :END:
+   Ever since I saw them in a Logitech marketing booklet as a kid,
+   I've been fascinated by trackballs. I would sometimes say to
+   myself: How cool! Instead of moving the mouse, here you move the
+   whole Universe to get the cursor to do your bidding. I tried
+   imagining how much fun using one would be. The prices, however,
+   were prohibitively high for a kid's whim. Then one day, many years
+   later, I saw the Logitech Trackman Marble discounted at a nearby
+   store and bought it without thinking twice. It was everything I
+   imagined it would be and more. Getting used to the new way of doing
+   things took me around 15 minutes. Another day and I felt
+   proficient. Having by then already switched to GNU/Linux, I was
+   confronted by the question of configuring this thing under
+   Xorg. This part turned out to also be fun, but with a much more
+   masochistic touch :). Below I'll describe my standard configuration
+   for the Trackman Marble and make some more general comments about
+   key mapping. Recently I bought another trackball - the CST 2545-5W
+   Laser Trackball. The principles underlying its configuration remain
+   unchanged, although a different button layout necessitates some changes.
+
+   #+CAPTION: Logitech Trackman Marble
+   #+ATTR_HTML: :width 600 px
+   [[file:img/logitech-trackman-marble.jpg]]
+
+   The Xorg configuration for trackballs resides in a file
+   =10-evdev.conf=. On Debian derivatives, such as Ubuntu, this file
+   is typically located in =/usr/share/X11/xorg.conf.d=. For systems
+   with a more traditional file layout (such as OpenBSD) a good place
+   to put the configuration might also be =/etc/X11/xorg.conf=. Here's
+   the configuration bit:
+   #+BEGIN_EXAMPLE
+     Section "InputClass"
+         Identifier   "Logitech USB Trackball"
+         # MatchVendor  "Logitech"
+         MatchProduct "Trackball"
+         Option       "ButtonMapping"      "1 8 3 4 5 6 7 2 8"
+         Option       "EmulateWheel"       "True"
+         Option       "EmulateWheelButton" "8"
+         Option       "ZAxisMapping"       "4 5"
+         Option       "XAxisMapping"       "6 7"
+         Option       "Emulate3Buttons"    "true"
+     EndSection
+   #+END_EXAMPLE
+   Let's quickly go through various items in that entry:
+   - =Identifier= and =MatchProduct= match a particular model's
+     information (as discoverable using =lsusb=).
+   - =ButtonMapping= specifies which physical buttons will emit which
+     button actions. More on this below.
+   - =EmulateWheel= determines whether there should be a button which
+     will make the ball act as a 2-dimensional scroll wheel instead of
+     moving the cursor.
+   - =EmulateWheelButton= - which button should that be (in my case -
+     small left button).
+   - =ZAxisMapping= and =XAxisMapping= - which button actions (or ball
+     motions) should scroll in different directions.
+   - =Emulate3Buttons= - whether pressing both LMB and RMB
+     simultaneously should emulate the middle button.
+   What this means in practice is roughly this - the two large buttons
+   function as ordinary mouse buttons, the small left button enables
+   2D scrolling and the small right button is browser "back".
+   
+   #+CAPTION: CST 2545-5W 
+   #+ATTR_HTML: :width 600 px
+   [[file:img/cst-trackball.jpg]]
+
+   The CST 2545-5W trackball has a different anatomy and hence the
+   settings I chose for it differ slightly from the Logitech
+   model. Specifically, it has a physical scroll wheel, so the wheel
+   emulation feature is not that important. But I still chose to
+   enable it, this time using the physical middle button. Here's the
+   configuration:
+   #+BEGIN_EXAMPLE
+     Section "InputClass"
+         Identifier   "Clearly Superior Technologies. CST Laser Trackball"
+         # MatchVendor  "Clearly Superior Technologies."
+         MatchProduct "Trackball"
+         Option       "ButtonMapping"      "1 2 3 4 5 6 7 8 9"
+         Option       "EmulateWheel"       "True"
+         Option       "EmulateWheelButton" "2"
+         Option       "ZAxisMapping"       "4 5"
+         Option       "XAxisMapping"       "6 7"
+         Option       "Emulate3Buttons"    "true"
+     EndSection
+   #+END_EXAMPLE
+
+   To wrap up I'll briefly describe what the different numbers used
+   for mapping actually stand for. This is the result of perusing
+   various resources on the web, supplemented with using the
+   invaluable =xev= tool. In the option =ButtonMapping= positions
+   correspond to the following physical buttons/movements:
+   #+BEGIN_EXAMPLE
+     1 - Left Button
+     2 - Both Buttons
+     3 - Right Button
+     4 - Ball Down
+     5 - Ball Up
+     6 - Ball Left
+     7 - Ball Right
+     8 - Small Left Button
+     9 - Small Right Button
+   #+END_EXAMPLE
+   while the numbers occupying those positions correspond to the
+   following actions:
+   #+BEGIN_EXAMPLE
+     1 - Left Click
+     2 - Middle Click
+     3 - Right Click
+     4 - Cursor Down
+     5 - Cursor Up
+     6 - Cursor Left
+     7 - Cursor Right
+     8 - Browser Back
+     9 - Browser Forward
+   #+END_EXAMPLE
+   One final remark is that the number given to =EmulateWheelButton=
+   is the actual physical button, so regardless of your mapping above,
+   ="8"= will still refer to the =Small Left Button=.

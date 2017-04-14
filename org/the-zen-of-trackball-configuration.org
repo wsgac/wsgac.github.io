@@ -1,0 +1,22 @@
+* The Zen of trackball configuration
+Ever since I saw them in a Logitech marketing booklet as a kid,
+I've been fascinated by trackballs. I would sometimes say to
+myself: How cool! Instead of moving the mouse, here you move the
+whole Universe to get the cursor to do your bidding. I tried
+imagining how much fun using one would be. The prices, however,
+were prohibitively high for a kid's whim. Then one day, many years
+later, I saw the Logitech Trackman Marble discounted at a nearby
+store and bought it without thinking twice. It was everything I
+imagined it would be and more. Getting used to the new way of doing
+things took me around 15 minutes. Another day and I felt
+proficient. Having by then already switched to GNU/Linux, I was
+confronted by the question of configuring this thing under
+Xorg. This part turned out to also be fun, but with a much more
+masochistic touch :). Below I'll describe my standard configuration
+for the Trackman Marble and make some more general comments about
+key mapping. Recently I bought another trackball - the CST2545-5W
+Laser Trackball. The principles underlying its configuration remain
+unchanged, although a different button layout necessitates some changes.
+
+** Logitech Trackman Marble
+    Something or other

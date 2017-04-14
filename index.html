@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-03-20 Mon 21:02 -->
+<!-- 2017-04-14 Fri 12:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>wsg - non-random wandering</title>
@@ -240,7 +240,7 @@ for the JavaScript code in this tag.
 */
 
 <!--/*--><![CDATA[/*><!--*/
-org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("TOC_DEPTH", "2");
 org_html_manager.set("LINK_HOME", "");
 org_html_manager.set("LINK_UP", "");
 org_html_manager.set("LOCAL_TOC", "1");
@@ -311,17 +311,22 @@ for the JavaScript code in this tag.
 <li><a href="#org-mode-bundled-sync">Org-mode file bundled with executable synchronization code</a></li>
 </ul>
 </li>
+<li><a href="#hardware-configuration">Hardware Configuration</a>
+<ul>
+<li><a href="#the-zen-of-trackball-configuration">The Zen of trackball configuration</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgddf87b0" class="outline-2">
-<h2 id="emacs-hacking"><a id="orgddf87b0"></a>Emacs hacking</h2>
+<div id="outline-container-orgef39310" class="outline-2">
+<h2 id="emacs-hacking"><a id="orgef39310"></a>Emacs hacking</h2>
 <div class="outline-text-2" id="text-emacs-hacking">
 </div>
 
-<div id="outline-container-orgfd4ba31" class="outline-3">
-<h3 id="org-mode-bundled-sync"><a id="orgfd4ba31"></a>Org-mode file bundled with executable synchronization code</h3>
+<div id="outline-container-orgba6b40f" class="outline-3">
+<h3 id="org-mode-bundled-sync"><a id="orgba6b40f"></a>Org-mode file bundled with executable synchronization code</h3>
 <div class="outline-text-3" id="text-org-mode-bundled-sync">
 <p>
 I've been experimenting for a while with ways to get some kind of
@@ -341,10 +346,10 @@ For starters, I wanted to store the path to the remote file<sup><a id="fnr.1" cl
 e.g. using <code>#+BEGIN_EXAMPLE</code>:
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8989; font-style: italic;">#+name: remote-path</span>
-<span style="color: #008ED1; background-color: #2b2b2b;">#+BEGIN_EXAMPLE</span>
+<pre class="src src-org">#+name: remote-path
+#+BEGIN_EXAMPLE
   /scp:&lt;my-remote-hostname&gt;:/path/to/my/remote/file.org
-<span style="color: #008ED1; background-color: #2b2b2b;">#+END_EXAMPLE</span>
+#+END_EXAMPLE
 </pre>
 </div>
 <p>
@@ -357,14 +362,14 @@ Next, I added an Elisp snippet that syncs the file out to the
 remote location:
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8989; font-style: italic;">#+name: push</span>
-<span style="color: #008ED1; background-color: #2b2b2b;">#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent</span>
-<span style="color: #dcdccc; background-color: #383838;">  (save-buffer (current-buffer))</span>
-<span style="color: #dcdccc; background-color: #383838;">  (make-directory (file-name-directory remote) t)</span>
-<span style="color: #dcdccc; background-color: #383838;">  (copy-file buffer-file-name</span>
-<span style="color: #dcdccc; background-color: #383838;">             remote 1)</span>
-<span style="color: #dcdccc; background-color: #383838;">  (message </span><span style="color: #61CE3C; background-color: #383838;">"Synced file to %s"</span><span style="color: #dcdccc; background-color: #383838;"> remote)</span>
-<span style="color: #008ED1; background-color: #2b2b2b;">#+END_SRC</span>
+<pre class="src src-org">#+name: push
+#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent
+  (save-buffer (current-buffer))
+  (make-directory (file-name-directory remote) t)
+  (copy-file buffer-file-name
+             remote 1)
+  (message "Synced file to %s" remote)
+#+END_SRC
 </pre>
 </div>
 <p>
@@ -388,13 +393,13 @@ I also added a mirror image of the above snippet - in charge of
 copying changes <i>from</i> the remote server:
 </p>
 <div class="org-src-container">
-<pre class="src src-org"><span style="color: #8B8989; font-style: italic;">#+name: pull</span>
-<span style="color: #008ED1; background-color: #2b2b2b;">#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent</span>
-<span style="color: #dcdccc; background-color: #383838;">  (save-buffer (current-buffer))</span>
-<span style="color: #dcdccc; background-color: #383838;">  (copy-file remote buffer-file-name 1)</span>
-<span style="color: #dcdccc; background-color: #383838;">  (revert-buffer t t)</span>
-<span style="color: #dcdccc; background-color: #383838;">  (message </span><span style="color: #61CE3C; background-color: #383838;">"Synced %s to file"</span><span style="color: #dcdccc; background-color: #383838;"> remote)</span>
-<span style="color: #008ED1; background-color: #2b2b2b;">#+END_SRC</span>
+<pre class="src src-org">#+name: pull
+#+BEGIN_SRC emacs-lisp :var remote=remote-path :results output silent
+  (save-buffer (current-buffer))
+  (copy-file remote buffer-file-name 1)
+  (revert-buffer t t)
+  (message "Synced %s to file" remote)
+#+END_SRC
 </pre>
 </div>
 <p>
@@ -416,13 +421,13 @@ finding the right code block and executing it. This turned out to
 be relatively simple. I came up with the following Elisp function:
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span style="color: #4c83ff;">defun</span> <span style="color: #ff1493;">org-sync-current-file</span> (prefix)
-  (<span style="color: #4c83ff;">interactive</span> <span style="color: #61CE3C;">"P"</span>)
-  (<span style="color: #4c83ff;">let</span> ((action
-   (<span style="color: #4c83ff;">cl-case</span> prefix
-     ((nil) <span style="color: #61CE3C;">"push"</span>)
-     (t <span style="color: #61CE3C;">"pull"</span>))))
-    (<span style="color: #4c83ff;">save-excursion</span>
+<pre class="src src-emacs-lisp">(defun org-sync-current-file (prefix)
+  (interactive "P")
+  (let ((action
+   (cl-case prefix
+     ((nil) "push")
+     (t "pull"))))
+    (save-excursion
       (org-babel-goto-named-src-block action)
       (org-ctrl-c-ctrl-c))))
 </pre>
@@ -437,7 +442,7 @@ the code. One final touch to make this more usable is to pick some
 reasonable key binding. In my case <code>F12</code> seemed a decent choice:
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(define-key global-map (kbd <span style="color: #61CE3C;">"&lt;f12&gt;"</span>) 'org-sync-current-file)
+<pre class="src src-emacs-lisp">(define-key global-map (kbd "&lt;f12&gt;") 'org-sync-current-file)
 </pre>
 </div>
 
@@ -446,6 +451,158 @@ The above solution might not be what you'd consider a reliable
 synchronization system. Rather, it should be regarded as an
 interesting - if somewhat contrived - exercise in blurring the
 lines between data and behavior. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org11481fe" class="outline-2">
+<h2 id="hardware-configuration"><a id="org11481fe"></a>Hardware Configuration</h2>
+<div class="outline-text-2" id="text-hardware-configuration">
+</div>
+
+<div id="outline-container-org582bdbf" class="outline-3">
+<h3 id="the-zen-of-trackball-configuration"><a id="org582bdbf"></a>The Zen of trackball configuration</h3>
+<div class="outline-text-3" id="text-the-zen-of-trackball-configuration">
+<p>
+Ever since I saw them in a Logitech marketing booklet as a kid,
+I've been fascinated by trackballs. I would sometimes say to
+myself: How cool! Instead of moving the mouse, here you move the
+whole Universe to get the cursor to do your bidding. I tried
+imagining how much fun using one would be. The prices, however,
+were prohibitively high for a kid's whim. Then one day, many years
+later, I saw the Logitech Trackman Marble discounted at a nearby
+store and bought it without thinking twice. It was everything I
+imagined it would be and more. Getting used to the new way of doing
+things took me around 15 minutes. Another day and I felt
+proficient. Having by then already switched to GNU/Linux, I was
+confronted by the question of configuring this thing under
+Xorg. This part turned out to also be fun, but with a much more
+masochistic touch :). Below I'll describe my standard configuration
+for the Trackman Marble and make some more general comments about
+key mapping. Recently I bought another trackball - the CST 2545-5W
+Laser Trackball. The principles underlying its configuration remain
+unchanged, although a different button layout necessitates some changes.
+</p>
+
+
+<div class="figure">
+<p><img src="img/logitech-trackman-marble.jpg" alt="logitech-trackman-marble.jpg" width="600 px" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Logitech Trackman Marble</p>
+</div>
+
+<p>
+The Xorg configuration for trackballs resides in a file
+<code>10-evdev.conf</code>. On Debian derivatives, such as Ubuntu, this file
+is typically located in <code>/usr/share/X11/xorg.conf.d</code>. For systems
+with a more traditional file layout (such as OpenBSD) a good place
+to put the configuration might also be <code>/etc/X11/xorg.conf</code>. Here's
+the configuration bit:
+</p>
+<pre class="example">
+Section "InputClass"
+    Identifier   "Logitech USB Trackball"
+    # MatchVendor  "Logitech"
+    MatchProduct "Trackball"
+    Option       "ButtonMapping"      "1 8 3 4 5 6 7 2 8"
+    Option       "EmulateWheel"       "True"
+    Option       "EmulateWheelButton" "8"
+    Option       "ZAxisMapping"       "4 5"
+    Option       "XAxisMapping"       "6 7"
+    Option       "Emulate3Buttons"    "true"
+EndSection
+</pre>
+<p>
+Let's quickly go through various items in that entry:
+</p>
+<ul class="org-ul">
+<li><code>Identifier</code> and <code>MatchProduct</code> match a particular model's
+information (as discoverable using <code>lsusb</code>).</li>
+<li><code>ButtonMapping</code> specifies which physical buttons will emit which
+button actions. More on this below.</li>
+<li><code>EmulateWheel</code> determines whether there should be a button which
+will make the ball act as a 2-dimensional scroll wheel instead of
+moving the cursor.</li>
+<li><code>EmulateWheelButton</code> - which button should that be (in my case -
+small left button).</li>
+<li><code>ZAxisMapping</code> and <code>XAxisMapping</code> - which button actions (or ball
+motions) should scroll in different directions.</li>
+<li><code>Emulate3Buttons</code> - whether pressing both LMB and RMB
+simultaneously should emulate the middle button.</li>
+</ul>
+<p>
+What this means in practice is roughly this - the two large buttons
+function as ordinary mouse buttons, the small left button enables
+2D scrolling and the small right button is browser "back".
+</p>
+
+
+<div class="figure">
+<p><img src="img/cst-trackball.jpg" alt="cst-trackball.jpg" width="600 px" />
+</p>
+<p><span class="figure-number">Figure 2: </span>CST 2545-5W</p>
+</div>
+
+<p>
+The CST 2545-5W trackball has a different anatomy and hence the
+settings I chose for it differ slightly from the Logitech
+model. Specifically, it has a physical scroll wheel, so the wheel
+emulation feature is not that important. But I still chose to
+enable it, this time using the physical middle button. Here's the
+configuration:
+</p>
+<pre class="example">
+Section "InputClass"
+    Identifier   "Clearly Superior Technologies. CST Laser Trackball"
+    # MatchVendor  "Clearly Superior Technologies."
+    MatchProduct "Trackball"
+    Option       "ButtonMapping"      "1 2 3 4 5 6 7 8 9"
+    Option       "EmulateWheel"       "True"
+    Option       "EmulateWheelButton" "2"
+    Option       "ZAxisMapping"       "4 5"
+    Option       "XAxisMapping"       "6 7"
+    Option       "Emulate3Buttons"    "true"
+EndSection
+</pre>
+
+<p>
+To wrap up I'll briefly describe what the different numbers used
+for mapping actually stand for. This is the result of perusing
+various resources on the web, supplemented with using the
+invaluable <code>xev</code> tool. In the option <code>ButtonMapping</code> positions
+correspond to the following physical buttons/movements:
+</p>
+<pre class="example">
+1 - Left Button
+2 - Both Buttons
+3 - Right Button
+4 - Ball Down
+5 - Ball Up
+6 - Ball Left
+7 - Ball Right
+8 - Small Left Button
+9 - Small Right Button
+</pre>
+<p>
+while the numbers occupying those positions correspond to the
+following actions:
+</p>
+<pre class="example">
+1 - Left Click
+2 - Middle Click
+3 - Right Click
+4 - Cursor Down
+5 - Cursor Up
+6 - Cursor Left
+7 - Cursor Right
+8 - Browser Back
+9 - Browser Forward
+</pre>
+<p>
+One final remark is that the number given to <code>EmulateWheelButton</code>
+is the actual physical button, so regardless of your mapping above,
+<code>"8"</code> will still refer to the <code>Small Left Button</code>.
 </p>
 </div>
 </div>
@@ -467,8 +624,8 @@ the sync.
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Wojciech S. Gac</p>
-<p class="date">Created: 2017-03-20 Mon 21:02</p>
-<p class="validation"></p>
+<p class="date">Created: 2017-04-14 Fri 12:31</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>
