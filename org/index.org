@@ -242,7 +242,7 @@ the sync.
    correspond to the following physical buttons/movements:
    #+BEGIN_EXAMPLE
      1 - Left Button
-     2 - Both Buttons
+     2 - Middle Button
      3 - Right Button
      4 - Ball Down
      5 - Ball Up
